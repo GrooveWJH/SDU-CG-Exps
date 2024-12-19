@@ -1,2 +1,7 @@
+#pragma once
 
-#define GGTEST NULL
+#define ProjectRootDir "/Users/groove/Project/code/SDU-CG-Exps"
+
+void PrintCurrentWorkingDirectory();
+
+const char* GetProjectRootDir();

@@ -9,6 +9,8 @@ set(CMAKE_SUPPRESS_REGENERATION ON)
 # 设置全局可执行文件输出目录
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/output)
 
+configure_file(${CMAKE_SOURCE_DIR}/lib/ggtest/ggtest.h.in ${CMAKE_SOURCE_DIR}/lib/ggtest/ggtest.h)
+
 # 添加 lib 子目录
 add_subdirectory(lib)
 

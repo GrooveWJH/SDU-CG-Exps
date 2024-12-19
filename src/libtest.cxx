@@ -16,7 +16,7 @@ int main() {
         std::cerr << "Failed to initialize GLFW" << std::endl;
         return -1; // 如果初始化失败，输出错误信息并退出程序
     }
-
+    
     // 配置 GLFW：设置 OpenGL 的主要版本和次要版本为 3.3，启用核心模式 (Core Profile)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // OpenGL 主版本号 3
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // OpenGL 次版本号 3

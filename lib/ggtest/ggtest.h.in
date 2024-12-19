@@ -1,0 +1,7 @@
+#pragma once
+
+#define ProjectRootDir "@CMAKE_CURRENT_SOURCE_DIR@"
+
+void PrintCurrentWorkingDirectory();
+
+const char* GetProjectRootDir();
