@@ -72,3 +72,7 @@ Thumbs.db
 *.stackdump
 vgcore.*
 core.*
+
+# Vscode
+.vscode
+.cache
