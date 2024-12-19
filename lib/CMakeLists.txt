@@ -6,4 +6,8 @@ add_subdirectory(imgui)
 
 add_subdirectory(ggtest)
 
-target_link_libraries(groovecglib INTERFACE imgui ggtest)
+add_subdirectory(glfw)
+
+add_subdirectory(glad)
+
+target_link_libraries(groovecglib INTERFACE glad imgui ggtest glfw )
