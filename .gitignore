@@ -22,6 +22,10 @@ build/
 .AppleDouble
 .LSOverride
 
+# Vscode
+.vscode/
+.cache/
+
 # Icon must end with two \r
 Icon
 ._*
@@ -73,6 +77,3 @@ Thumbs.db
 vgcore.*
 core.*
 
-# Vscode
-.vscode
-.cache
