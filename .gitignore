@@ -1,0 +1,74 @@
+# CMake generated files
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+CMakeUserPresets.json
+
+# Build directories
+build/
+*.build/
+*.xcodeproj/
+
+# macOS specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+._*
+
+# Thumbnails
+Thumbs.db
+*.Thumbs.db
+
+# Temporary files
+.*.swp
+.*.swx
+.*.swo
+.*~
+*.bak
+*.tmp
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+# Compiled object files
+*.o
+*.obj
+*.lo
+*.la
+*.il
+*.slo
+
+# Static Libraries
+*.a
+*.lib
+
+# Dynamic Libraries
+*.so
+*.dylib
+*.dll
+
+# Executable files
+*.exe
+*.out
+*.app
+*.i*
+*.dSYM/
+
+# Debug files
+*.debug
+*.stackdump
+vgcore.*
+core.*

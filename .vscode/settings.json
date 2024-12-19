@@ -1,0 +1,14 @@
+{
+    "workbench.colorCustomizations": {
+        "editorCursor.foreground": "#ffffff",
+        "terminalCursor.foreground": "#ffffff",
+        "activityBar.background": "#1B19BB",
+        "titleBar.activeBackground": "#3230E3",
+        "titleBar.activeForeground": "#FAFAFE"
+    },
+    "clangd.arguments": [
+        "--compile-commands-dir=${WorkspaceFolder}/build"
+        ],
+    "cmake.ignoreCMakeListsMissing": true,
+    "cmake.configureOnEdit": true,
+}
