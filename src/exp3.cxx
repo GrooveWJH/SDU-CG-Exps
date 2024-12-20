@@ -1,5 +1,5 @@
 #include "easyimgui.h"
-#include "algorithm.h" // 包含绘制算法
+#include "Algorithm.h" // 包含绘制算法
 #include <iostream>
 #include "imgui.h"
 

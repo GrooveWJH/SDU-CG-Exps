@@ -16,7 +16,7 @@ void ShowWindowsInfos();
 void ArrangeWindowsDynamicGrid(int window_count, ImVec2 base_pos = ImVec2(50, 50), ImVec2 window_size = ImVec2(300, 200), int columns = 3);
 
 // 初始化 GLFW 和 ImGui，并返回一个初始化后的 GLFW 窗口
-GLFWwindow* InitGLFWAndImGui(const char* window_title, int width, int height);
+GLFWwindow* InitGLFWAndImGui(const char* window_title, int width = 1500, int height = 1000);
 
 // 开始一帧 ImGui 渲染
 void BeginImGuiFrame();
