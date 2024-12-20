@@ -5,9 +5,9 @@
 #include <GLFW/glfw3.h>
 // Struct to store window information
 struct WindowInfo {
-    const char* name;  // Window name
-    ImVec2 pos;        // Position of the window
-    ImVec2 size;       // Size of the window
+    const char* name; // Window name
+    ImVec2 pos; // Position of the window
+    ImVec2 size; // Size of the window
 };
 
 // Function to display all window information
@@ -26,6 +26,5 @@ void EndImGuiFrame(GLFWwindow* window);
 
 // 清理 GLFW 和 ImGui
 void CleanupGLFWAndImGui(GLFWwindow* window);
-
 
 #endif // EASYIMGUI_H

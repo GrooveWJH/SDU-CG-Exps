@@ -2,15 +2,18 @@
 #include "easyimgui.h"
 #include <imgui.h>
 #include <imgui_internal.h>
-#include <vector>
+
 #include <iostream>
+#include <vector>
+
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
 // Global vector to store window info
 std::vector<WindowInfo> windowInfos;
 
-void ShowWindowsInfos() {
+void ShowWindowsInfos()
+{
     // Begin a new window for displaying window info
     ImGui::Begin("Windows Info");
 
@@ -38,30 +41,30 @@ void ShowWindowsInfos() {
 
     ImGui::End();
 }
-
 // easyimgui.cxx
-void ArrangeWindowsDynamicGrid(int window_count, ImVec2 base_pos, ImVec2 window_size, int columns) {
+void ArrangeWindowsDynamicGrid(int window_count, ImVec2 base_pos,
+    ImVec2 window_size, int columns)
+{
     for (int i = 0; i < window_count; ++i) {
         ImVec2 current_pos = base_pos;
-        current_pos.x += (i % columns) * (window_size.x + 10); // 每列增加宽度和间隔
-        current_pos.y += (i / (float)columns) * (window_size.y + 10); // 每行增加高度和间隔
+        current_pos.x += (i % columns) * (window_size.x + 10);
+        current_pos.y += (i / (float)columns) * (window_size.y + 10);
 
-        // 设置窗口位置
         ImGui::SetNextWindowPos(current_pos);
 
-        // 创建窗口
         ImGui::Begin(("Window " + std::to_string(i + 1)).c_str());
         ImGui::Text("This is Window %d", i + 1);
         ImGui::End();
     }
 }
 
-
-static void glfw_error_callback(int error, const char* description) {
+static void glfw_error_callback(int error, const char* description)
+{
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
-GLFWwindow* InitGLFWAndImGui(const char* window_title, int width, int height) {
+GLFWwindow* InitGLFWAndImGui(const char* window_title, int width, int height)
+{
     // 设置 GLFW 错误回调
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) {
@@ -108,14 +111,16 @@ GLFWwindow* InitGLFWAndImGui(const char* window_title, int width, int height) {
     return window;
 }
 
-void BeginImGuiFrame() {
+void BeginImGuiFrame()
+{
     // 开始一帧 ImGui 渲染
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 }
 
-void EndImGuiFrame(GLFWwindow* window) {
+void EndImGuiFrame(GLFWwindow* window)
+{
     // 渲染并交换缓冲区
     ImGui::Render();
     int display_w, display_h;
@@ -128,7 +133,8 @@ void EndImGuiFrame(GLFWwindow* window) {
     glfwSwapBuffers(window);
 }
 
-void CleanupGLFWAndImGui(GLFWwindow* window) {
+void CleanupGLFWAndImGui(GLFWwindow* window)
+{
     // 清理 ImGui 和 GLFW
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();

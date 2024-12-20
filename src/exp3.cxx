@@ -1,5 +1,5 @@
 #include "easyimgui.h"
-#include "easyimgui.h"
+#include "algorithm.h" // 包含绘制算法
 #include <iostream>
 #include "imgui.h"
 
@@ -13,7 +13,7 @@ struct LineParams {
 
 int main() {
     // 初始化 GLFW 和 ImGui
-    GLFWwindow* window = InitGLFWAndImGui("Exp1: Line Drawing with ImGui", 1400, 900);
+    GLFWwindow* window = InitGLFWAndImGui("exp3: DrawLineMidpoint", 1400, 900);
     if (!window) return -1;
 
     LineParams lineParams;
@@ -21,28 +21,36 @@ int main() {
     bool show_control_window = true;
     bool show_draw_window = true;
     bool show_windows_infos = true;
+    bool use_dda = false; // 控制使用哪种算法
+    float point_radius = 2.0f; // 圆形半径
 
     // 主循环
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents(); // 处理事件
         BeginImGuiFrame(); // 开始新的一帧
 
-        // 绘制直线窗口
         if (show_draw_window) {
-            ImGui::Begin("exp1: DrawLine", &show_draw_window,
+            ImGui::Begin("Line Drawing Window", &show_draw_window,
                          ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
             ImDrawList* draw_list = ImGui::GetWindowDrawList();
-            ImVec2 canvas_pos = ImGui::GetCursorScreenPos(); // 窗口内容区左上角坐标
-            ImVec2 canvas_size = ImGui::GetContentRegionAvail(); // 内容区大小
+            ImVec2 canvas_pos = ImGui::GetCursorScreenPos();
+            ImVec2 canvas_size = ImGui::GetContentRegionAvail();
 
             ImVec2 p1 = ImVec2(canvas_pos.x + lineParams.x0, canvas_pos.y + lineParams.y0);
             ImVec2 p2 = ImVec2(canvas_pos.x + lineParams.x1, canvas_pos.y + lineParams.y1);
-            draw_list->AddLine(p1, p2, ImColor(lineParams.color), 2.0f);
+
+            // 根据用户选择调用 DDA 或中点算法
+            if (use_dda) {
+                DrawLineDDA(draw_list, p1, p2, ImColor(lineParams.color), point_radius);
+            } else {
+                DrawLineMidpoint(draw_list, p1, p2, ImColor(lineParams.color), point_radius);
+            }
 
             if (show_control_window) {
                 ImGui::Begin("Parameter Settings", &show_control_window);
                 ImGui::SetWindowSize(ImVec2(350, 200));
+
                 ImGui::Text("Line Color:");
                 ImGui::ColorEdit3("##lineColor", (float*)&lineParams.color);
 
@@ -50,6 +58,11 @@ int main() {
                 ImGui::SliderFloat("Start Point y0:", &lineParams.y0, 0.0f, canvas_size.y);
                 ImGui::SliderFloat("End Point x1:", &lineParams.x1, 0.0f, canvas_size.x);
                 ImGui::SliderFloat("End Point y1:", &lineParams.y1, 0.0f, canvas_size.y);
+
+                ImGui::SliderFloat("Point Radius", &point_radius, 1.0f, 10.0f, "Radius: %.1f");
+
+                // 添加算法选择控件
+                ImGui::Checkbox("Use DDA Algorithm", &use_dda);
 
                 if (ImGui::Button("Confirm")) {
                     std::cout << "Parameters confirmed: "

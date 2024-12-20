@@ -1,7 +1,7 @@
 #include "easyimgui.h"
-#include "easyimgui.h"
 #include <iostream>
 #include "imgui.h"
+#include <cmath> // 用于绝对值函数
 
 struct LineParams {
     float x0 = 0.0f;
@@ -11,9 +11,34 @@ struct LineParams {
     ImVec4 color = ImVec4(0.0f, 0.0f, 1.0f, 1.0f); // Default to blue
 };
 
+
+void DrawLineDDA(ImDrawList* draw_list, ImVec2 start, ImVec2 end, ImU32 color, float radius = 1.0f) {
+    // 计算增量
+    float dx = end.x - start.x;
+    float dy = end.y - start.y;
+
+    // 确定步数（绝对值更大的轴方向决定步数）
+    float steps = std::max(std::abs(dx), std::abs(dy));
+
+    // 计算每一步的增量
+    float x_inc = dx / steps;
+    float y_inc = dy / steps;
+
+    // 起始点
+    float x = start.x;
+    float y = start.y;
+
+    // 绘制每一个点（用圆形代替矩形）
+    for (int i = 0; i <= steps; i++) {
+        draw_list->AddCircleFilled(ImVec2(x, y), radius, color); // 绘制一个圆形点
+        x += x_inc; // 更新 X 坐标
+        y += y_inc; // 更新 Y 坐标
+    }
+}
+
 int main() {
     // 初始化 GLFW 和 ImGui
-    GLFWwindow* window = InitGLFWAndImGui("Exp1: Line Drawing with ImGui", 1400, 900);
+    GLFWwindow* window = InitGLFWAndImGui("exp2: DrawLineDDA", 1400, 900);
     if (!window) return -1;
 
     LineParams lineParams;
@@ -29,16 +54,19 @@ int main() {
 
         // 绘制直线窗口
         if (show_draw_window) {
-            ImGui::Begin("exp1: DrawLine", &show_draw_window,
+            ImGui::Begin("Line Drawing Window", &show_draw_window,
                          ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
             ImDrawList* draw_list = ImGui::GetWindowDrawList();
             ImVec2 canvas_pos = ImGui::GetCursorScreenPos(); // 窗口内容区左上角坐标
             ImVec2 canvas_size = ImGui::GetContentRegionAvail(); // 内容区大小
 
+            // 将用户输入的坐标转为窗口内的实际坐标
             ImVec2 p1 = ImVec2(canvas_pos.x + lineParams.x0, canvas_pos.y + lineParams.y0);
             ImVec2 p2 = ImVec2(canvas_pos.x + lineParams.x1, canvas_pos.y + lineParams.y1);
-            draw_list->AddLine(p1, p2, ImColor(lineParams.color), 2.0f);
+
+            // 使用 DDA 算法绘制直线
+            DrawLineDDA(draw_list, p1, p2, ImColor(lineParams.color),5.0f);
 
             if (show_control_window) {
                 ImGui::Begin("Parameter Settings", &show_control_window);
