@@ -4,14 +4,6 @@
 #include <imgui.h>
 #include <cmath>
 
-// 定义裁剪窗口和直线参数
-struct ClipWindow {
-    float x0 = 100.0f; // 左上角 x 坐标
-    float y0 = 100.0f; // 左上角 y 坐标
-    float x1 = 200.0f; // 右下角 x 坐标
-    float y1 = 200.0f; // 右下角 y 坐标
-};
-
 struct Line {
     float x0 = 120.0f, y0 = 80.0f; // 起点
     float x1 = 180.0f, y1 = 230.0f; // 终点

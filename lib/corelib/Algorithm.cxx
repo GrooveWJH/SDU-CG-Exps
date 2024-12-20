@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <cmath>
 #include <vector>
+#include <queue>
+
 // 使用 DDA 算法绘制直线
 void DrawLineDDA(ImDrawList* draw_list,
     ImVec2 start,
@@ -258,6 +260,17 @@ void DrawEllipseMidpoint(ImDrawList* draw_list,
             d2 += dx - dy + a * a;
         }
         draw_symmetric_points(x, y);
+    }
+}
+
+void DrawPolygon(ImDrawList* draw_list, const ImVec2& canvas_pos, const std::vector<ImVec2>& polygon, ImU32 color) {
+    for (size_t i = 0; i < polygon.size(); ++i) {
+        size_t next = (i + 1) % polygon.size();
+        draw_list->AddLine(
+            ImVec2(canvas_pos.x + polygon[i].x, canvas_pos.y + polygon[i].y),
+            ImVec2(canvas_pos.x + polygon[next].x, canvas_pos.y + polygon[next].y),
+            color, 2.0f
+        );
     }
 }
 
@@ -590,3 +603,76 @@ bool CohenSutherlandLineClip(float& x0, float& y0, float& x1, float& y1, float x
 
     return accept;
 }
+
+// 判断点是否在裁剪窗口内
+bool IsInside(const ImVec2& point, const ClipWindow& clipWindow, int edge) {
+    switch (edge) {
+    case 0: // 左边界
+        return point.x >= clipWindow.x0;
+    case 1: // 右边界
+        return point.x <= clipWindow.x1;
+    case 2: // 下边界
+        return point.y >= clipWindow.y0;
+    case 3: // 上边界
+        return point.y <= clipWindow.y1;
+    }
+    return false;
+}
+
+// 计算交点
+ImVec2 ComputeIntersection(const ImVec2& p1, const ImVec2& p2, const ClipWindow& clipWindow, int edge) {
+    float x, y;
+
+    switch (edge) {
+    case 0: // 左边界
+        x = clipWindow.x0;
+        y = p1.y + (p2.y - p1.y) * (clipWindow.x0 - p1.x) / (p2.x - p1.x);
+        break;
+    case 1: // 右边界
+        x = clipWindow.x1;
+        y = p1.y + (p2.y - p1.y) * (clipWindow.x1 - p1.x) / (p2.x - p1.x);
+        break;
+    case 2: // 下边界
+        y = clipWindow.y0;
+        x = p1.x + (p2.x - p1.x) * (clipWindow.y0 - p1.y) / (p2.y - p1.y);
+        break;
+    case 3: // 上边界
+        y = clipWindow.y1;
+        x = p1.x + (p2.x - p1.x) * (clipWindow.y1 - p1.y) / (p2.y - p1.y);
+        break;
+    }
+
+    return ImVec2(x, y);
+}
+
+// Sutherland-Hodgman 多边形裁剪算法
+std::vector<ImVec2> SutherlandHodgmanPolygonClip(const std::vector<ImVec2>& polygon, const ClipWindow& clipWindow) {
+    std::vector<ImVec2> inputList = polygon;
+    std::vector<ImVec2> outputList;
+
+    for (int edge = 0; edge < 4; ++edge) { // 对每条裁剪边进行裁剪
+        outputList.clear();
+
+        ImVec2 prevPoint = inputList.back(); // 多边形最后一个点
+        for (const auto& curPoint : inputList) {
+            if (IsInside(curPoint, clipWindow, edge)) { // 当前点在裁剪窗口内
+                if (!IsInside(prevPoint, clipWindow, edge)) {
+                    // 上一个点在裁剪窗口外，计算交点
+                    outputList.push_back(ComputeIntersection(prevPoint, curPoint, clipWindow, edge));
+                }
+                // 添加当前点
+                outputList.push_back(curPoint);
+            } else if (IsInside(prevPoint, clipWindow, edge)) {
+                // 当前点在裁剪窗口外，上一个点在窗口内，计算交点
+                outputList.push_back(ComputeIntersection(prevPoint, curPoint, clipWindow, edge));
+            }
+            prevPoint = curPoint;
+        }
+
+        inputList = outputList; // 更新输入点集
+    }
+
+    return outputList;
+}
+
+

@@ -67,11 +67,12 @@ Thumbs.db
 *.dll
 
 # Executable files
-*.exe
-*.out
-*.app
+**/*.exe
+**/*.out
+**/*.app
 # *.i*
-*.dSYM/
+**/*.ini
+**/*.dSYM/
 
 # Debug files
 *.debug
