@@ -1,9 +1,13 @@
 #include "Algorithm.h"
 #include <algorithm>
 #include <cmath>
-
+#include <vector>
 // 使用 DDA 算法绘制直线
-void DrawLineDDA(ImDrawList* draw_list, ImVec2 start, ImVec2 end, ImU32 color, float radius)
+void DrawLineDDA(ImDrawList* draw_list,
+    ImVec2 start,
+    ImVec2 end,
+    ImU32 color,
+    float radius)
 {
     // 计算增量
     float dx = end.x - start.x;
@@ -29,7 +33,11 @@ void DrawLineDDA(ImDrawList* draw_list, ImVec2 start, ImVec2 end, ImU32 color, f
 }
 
 // 使用中点算法绘制直线
-void DrawLineMidpoint(ImDrawList* draw_list, ImVec2 start, ImVec2 end, ImU32 color, float radius)
+void DrawLineMidpoint(ImDrawList* draw_list,
+    ImVec2 start,
+    ImVec2 end,
+    ImU32 color,
+    float radius)
 {
     // 起点和终点的整数坐标
     int x0 = static_cast<int>(start.x);
@@ -88,7 +96,11 @@ void DrawLineMidpoint(ImDrawList* draw_list, ImVec2 start, ImVec2 end, ImU32 col
     }
 }
 
-void DrawLineBresenham(ImDrawList* draw_list, ImVec2 start, ImVec2 end, ImU32 color, float radius)
+void DrawLineBresenham(ImDrawList* draw_list,
+    ImVec2 start,
+    ImVec2 end,
+    ImU32 color,
+    float radius)
 {
     // 起点和终点的整数坐标
     int x0 = static_cast<int>(start.x);
@@ -144,7 +156,10 @@ void DrawLineBresenham(ImDrawList* draw_list, ImVec2 start, ImVec2 end, ImU32 co
 }
 
 // 使用中点画圆算法绘制圆
-void DrawCircleMidpoint(ImDrawList* draw_list, ImVec2 center, int radius, ImU32 color)
+void DrawCircleMidpoint(ImDrawList* draw_list,
+    ImVec2 center,
+    int radius,
+    ImU32 color)
 {
     int x = 0;
     int y = radius;
@@ -152,14 +167,22 @@ void DrawCircleMidpoint(ImDrawList* draw_list, ImVec2 center, int radius, ImU32 
 
     // 辅助函数：绘制八分对称点
     auto draw_symmetric_points = [&](int x, int y) {
-        draw_list->AddCircleFilled(ImVec2(center.x + x, center.y + y), 1.0f, color); // 第一象限
-        draw_list->AddCircleFilled(ImVec2(center.x - x, center.y + y), 1.0f, color); // 第二象限
-        draw_list->AddCircleFilled(ImVec2(center.x + x, center.y - y), 1.0f, color); // 第四象限
-        draw_list->AddCircleFilled(ImVec2(center.x - x, center.y - y), 1.0f, color); // 第三象限
-        draw_list->AddCircleFilled(ImVec2(center.x + y, center.y + x), 1.0f, color); // 垂直对称（第一）
-        draw_list->AddCircleFilled(ImVec2(center.x - y, center.y + x), 1.0f, color); // 垂直对称（第二）
-        draw_list->AddCircleFilled(ImVec2(center.x + y, center.y - x), 1.0f, color); // 垂直对称（第四）
-        draw_list->AddCircleFilled(ImVec2(center.x - y, center.y - x), 1.0f, color); // 垂直对称（第三）
+        draw_list->AddCircleFilled(
+            ImVec2(center.x + x, center.y + y), 1.0f, color); // 第一象限
+        draw_list->AddCircleFilled(
+            ImVec2(center.x - x, center.y + y), 1.0f, color); // 第二象限
+        draw_list->AddCircleFilled(
+            ImVec2(center.x + x, center.y - y), 1.0f, color); // 第四象限
+        draw_list->AddCircleFilled(
+            ImVec2(center.x - x, center.y - y), 1.0f, color); // 第三象限
+        draw_list->AddCircleFilled(
+            ImVec2(center.x + y, center.y + x), 1.0f, color); // 垂直对称（第一）
+        draw_list->AddCircleFilled(
+            ImVec2(center.x - y, center.y + x), 1.0f, color); // 垂直对称（第二）
+        draw_list->AddCircleFilled(
+            ImVec2(center.x + y, center.y - x), 1.0f, color); // 垂直对称（第四）
+        draw_list->AddCircleFilled(
+            ImVec2(center.x - y, center.y - x), 1.0f, color); // 垂直对称（第三）
     };
 
     // 绘制初始点
@@ -179,7 +202,11 @@ void DrawCircleMidpoint(ImDrawList* draw_list, ImVec2 center, int radius, ImU32 
 }
 
 // 使用中点画椭圆算法绘制椭圆
-void DrawEllipseMidpoint(ImDrawList* draw_list, ImVec2 center, int a, int b, ImU32 color)
+void DrawEllipseMidpoint(ImDrawList* draw_list,
+    ImVec2 center,
+    int a,
+    int b,
+    ImU32 color)
 {
     int x = 0;
     int y = b;
@@ -236,9 +263,12 @@ void DrawEllipseMidpoint(ImDrawList* draw_list, ImVec2 center, int a, int b, ImU
 
 // 使用有序边表算法绘制填充多边形
 // 边结构体
-void DrawPolygonWithOrderedEdgeTable(ImDrawList* draw_list, ImVec2 canvas_pos,
-    const std::vector<float>& x, const std::vector<float>& y,
-    int vertexCount, ImU32 color)
+void DrawPolygonWithOrderedEdgeTable(ImDrawList* draw_list,
+    ImVec2 canvas_pos,
+    const std::vector<float>& x,
+    const std::vector<float>& y,
+    int vertexCount,
+    ImU32 color)
 {
     if (vertexCount < 3)
         return; // 至少需要 3 个顶点
@@ -280,7 +310,8 @@ void DrawPolygonWithOrderedEdgeTable(ImDrawList* draw_list, ImVec2 canvas_pos,
         if (std::ceil(y0f) == std::floor(y1f)) {
             y1f -= 1.0f; // 让上端点不包含在当前边
         }
-        // Edge(float x_val, float dx_val, int ymax_val): x(x_val), dx(dx_val), ymax(ymax_val) {}
+        // Edge(float x_val, float dx_val, int ymax_val): x(x_val), dx(dx_val),
+        // ymax(ymax_val) {}
         Edge edge;
         edge.x = x0f;
         edge.dx = dx;
@@ -309,17 +340,15 @@ void DrawPolygonWithOrderedEdgeTable(ImDrawList* draw_list, ImVec2 canvas_pos,
 
         // 移除 y >= ymax 的边
         activeEdgeTable.erase(
-            std::remove_if(activeEdgeTable.begin(), activeEdgeTable.end(),
-                [scanLine](const Edge& e) {
-                    return e.ymax <= scanLine;
-                }),
+            std::remove_if(activeEdgeTable.begin(),
+                activeEdgeTable.end(),
+                [scanLine](const Edge& e) { return e.ymax <= scanLine; }),
             activeEdgeTable.end());
 
         // 按 x 排序 AET
-        std::sort(activeEdgeTable.begin(), activeEdgeTable.end(),
-            [](const Edge& a, const Edge& b) -> bool {
-                return a.x < b.x;
-            });
+        std::sort(activeEdgeTable.begin(),
+            activeEdgeTable.end(),
+            [](const Edge& a, const Edge& b) -> bool { return a.x < b.x; });
 
         // 使用偶数奇数规则绘制扫描线
         for (size_t i = 0; i + 1 < activeEdgeTable.size(); i += 2) {
@@ -347,10 +376,15 @@ void DrawPolygonWithOrderedEdgeTable(ImDrawList* draw_list, ImVec2 canvas_pos,
 
 // 使用边标志法（Edge Flag Method）绘制填充多边形
 // 使用边标志法（Edge Flag Method）绘制填充多边形
-void DrawPolygonWithEdgeFlagMethod(ImDrawList* draw_list, ImVec2 canvas_pos, 
-                                   const std::vector<float>& x, const std::vector<float>& y, 
-                                   int vertexCount, ImU32 color) {
-    if (vertexCount < 3) return; // 多边形至少需要3个顶点
+void DrawPolygonWithEdgeFlagMethod(ImDrawList* draw_list,
+    ImVec2 canvas_pos,
+    const std::vector<float>& x,
+    const std::vector<float>& y,
+    int vertexCount,
+    ImU32 color)
+{
+    if (vertexCount < 3)
+        return; // 多边形至少需要3个顶点
 
     // 1. 确定多边形的y范围
     int ymin = std::numeric_limits<int>::max();
@@ -372,7 +406,8 @@ void DrawPolygonWithEdgeFlagMethod(ImDrawList* draw_list, ImVec2 canvas_pos,
         float y1f = y[next];
 
         // 忽略水平边
-        if (y0f == y1f) continue;
+        if (y0f == y1f)
+            continue;
 
         // 确保 y0 < y1
         if (y0f > y1f) {
@@ -410,24 +445,22 @@ void DrawPolygonWithEdgeFlagMethod(ImDrawList* draw_list, ImVec2 canvas_pos,
 
         // 将当前扫描线的边加入 AET
         if (scanLine - ymin >= 0 && scanLine - ymin < edgeTable.size()) {
-            activeEdgeTable.insert(activeEdgeTable.end(), 
-                                   edgeTable[scanLine - ymin].begin(), 
-                                   edgeTable[scanLine - ymin].end());
+            activeEdgeTable.insert(activeEdgeTable.end(),
+                edgeTable[scanLine - ymin].begin(),
+                edgeTable[scanLine - ymin].end());
         }
 
         // 移除 y >= ymax 的边
         activeEdgeTable.erase(
-            std::remove_if(activeEdgeTable.begin(), activeEdgeTable.end(), 
-                           [scanLine](const Edge& e) {
-                               return e.ymax <= scanLine;
-                           }), 
+            std::remove_if(activeEdgeTable.begin(),
+                activeEdgeTable.end(),
+                [scanLine](const Edge& e) { return e.ymax <= scanLine; }),
             activeEdgeTable.end());
 
         // 按 x 排序 AET
-        std::sort(activeEdgeTable.begin(), activeEdgeTable.end(), 
-                  [](const Edge& a, const Edge& b) -> bool {
-                      return a.x < b.x;
-                  });
+        std::sort(activeEdgeTable.begin(),
+            activeEdgeTable.end(),
+            [](const Edge& a, const Edge& b) -> bool { return a.x < b.x; });
 
         // 使用边标志法（Edge Flag Method）进行填充
         bool fill = false;
@@ -443,8 +476,7 @@ void DrawPolygonWithEdgeFlagMethod(ImDrawList* draw_list, ImVec2 canvas_pos,
                 draw_list->AddLine(
                     ImVec2(canvas_pos.x + xStart, canvas_pos.y + scanLine),
                     ImVec2(canvas_pos.x + xEnd, canvas_pos.y + scanLine),
-                    color
-                );
+                    color);
                 fill = false;
             }
         }
@@ -454,4 +486,107 @@ void DrawPolygonWithEdgeFlagMethod(ImDrawList* draw_list, ImVec2 canvas_pos,
             edge.x += edge.dx;
         }
     }
+}
+
+// 填充多边形区域（修复偏移问题）
+void DrawFilledRegion(ImDrawList* draw_list, ImVec2 canvas_pos, ImVec2 canvas_size, const std::vector<ImVec2>& vertices, int vertex_count, ImVec2 seed_point, ImU32 fill_color) {
+    // 创建一个临时数组，用于存储转换后的顶点坐标
+    std::vector<ImVec2> screen_vertices;
+    screen_vertices.reserve(vertex_count);
+
+    // 将顶点坐标从多边形坐标系转换为屏幕坐标
+    for (int i = 0; i < vertex_count; ++i) {
+        screen_vertices.push_back(ImVec2(canvas_pos.x + vertices[i].x, canvas_pos.y + vertices[i].y));
+    }
+
+    // 判断种子点是否在多边形内（射线法）
+    bool inside_polygon = false;
+    int intersections = 0;
+    for (int i = 0; i < vertex_count; ++i) {
+        ImVec2 p1 = vertices[i];
+        ImVec2 p2 = vertices[(i + 1) % vertex_count];
+        if ((seed_point.y > p1.y) != (seed_point.y > p2.y)) {
+            float x_intersect = p1.x + (seed_point.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y);
+            if (seed_point.x < x_intersect) {
+                intersections++;
+            }
+        }
+    }
+    inside_polygon = (intersections % 2 == 1);
+
+    // 如果种子点在多边形内部，则填充内部
+    if (inside_polygon) {
+        draw_list->AddConvexPolyFilled(screen_vertices.data(), vertex_count, fill_color);
+    }
+}
+
+
+// 计算点的区域码
+OutCode ComputeOutCode(float x, float y, float xmin, float ymin, float xmax, float ymax)
+{
+    OutCode code = INSIDE;
+
+    if (x < xmin)
+        code = static_cast<OutCode>(code | LEFT);
+    else if (x > xmax)
+        code = static_cast<OutCode>(code | RIGHT);
+    if (y < ymin)
+        code = static_cast<OutCode>(code | BOTTOM);
+    else if (y > ymax)
+        code = static_cast<OutCode>(code | TOP);
+
+    return code;
+}
+
+// 使用 Cohen-Sutherland 算法裁剪直线
+bool CohenSutherlandLineClip(float& x0, float& y0, float& x1, float& y1, float xmin, float ymin, float xmax, float ymax)
+{
+    OutCode outcode0 = ComputeOutCode(x0, y0, xmin, ymin, xmax, ymax);
+    OutCode outcode1 = ComputeOutCode(x1, y1, xmin, ymin, xmax, ymax);
+
+    bool accept = false;
+
+    while (true) {
+        if (!(outcode0 | outcode1)) {
+            // 两个端点都在窗口内
+            accept = true;
+            break;
+        } else if (outcode0 & outcode1) {
+            // 两个端点都在窗口外，并且在相同区域
+            break;
+        } else {
+            // 至少一个端点在窗口外
+            float x, y;
+
+            // 选择一个在窗口外的端点
+            OutCode outcodeOut = outcode0 ? outcode0 : outcode1;
+
+            if (outcodeOut & TOP) { // 点在窗口上方
+                x = x0 + (x1 - x0) * (ymax - y0) / (y1 - y0);
+                y = ymax;
+            } else if (outcodeOut & BOTTOM) { // 点在窗口下方
+                x = x0 + (x1 - x0) * (ymin - y0) / (y1 - y0);
+                y = ymin;
+            } else if (outcodeOut & RIGHT) { // 点在窗口右侧
+                y = y0 + (y1 - y0) * (xmax - x0) / (x1 - x0);
+                x = xmax;
+            } else if (outcodeOut & LEFT) { // 点在窗口左侧
+                y = y0 + (y1 - y0) * (xmin - x0) / (x1 - x0);
+                x = xmin;
+            }
+
+            // 更新点的位置，并重新计算区域码
+            if (outcodeOut == outcode0) {
+                x0 = x;
+                y0 = y;
+                outcode0 = ComputeOutCode(x0, y0, xmin, ymin, xmax, ymax);
+            } else {
+                x1 = x;
+                y1 = y;
+                outcode1 = ComputeOutCode(x1, y1, xmin, ymin, xmax, ymax);
+            }
+        }
+    }
+
+    return accept;
 }

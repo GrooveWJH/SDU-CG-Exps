@@ -22,7 +22,7 @@ struct PolygonParams {
 int main()
 {
     // 初始化 GLFW 和 ImGui，创建一个窗口
-    GLFWwindow* window = InitGLFWAndImGui("Polygon Ordered Edge Table", 2000, 1000);
+    GLFWwindow* window = InitGLFWAndImGui("exp8: Polygon Ordered Edge Table", 2000, 1000);
     if (!window)
         return -1; // 如果窗口创建失败，则退出程序
 
