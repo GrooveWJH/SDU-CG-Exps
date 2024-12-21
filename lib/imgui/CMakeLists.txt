@@ -16,9 +16,9 @@ target_include_directories(imgui PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/backends  # 后端实现头文件路径
     ${CMAKE_SOURCE_DIR}/lib/glfw/include  # 添加 GLFW 头文件路径
 )
-# 链接 GLFW 和 OpenGL 库
-find_package(OpenGL REQUIRED)
-target_link_libraries(imgui PUBLIC glfw OpenGL::GL)
+# # 链接 GLFW 和 OpenGL 库
+# find_package(OpenGL REQUIRED)
+# target_link_libraries(imgui PUBLIC glfw OpenGL::GL)
 
 
 # # 如果需要使用 backends 的文件，可以添加

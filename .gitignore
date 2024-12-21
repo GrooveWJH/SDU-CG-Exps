@@ -16,7 +16,6 @@ CMakeUserPresets.json
 build/
 *.build/
 *.xcodeproj/
-*.cmake
 output/
 
 # macOS specific files

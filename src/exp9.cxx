@@ -1,4 +1,4 @@
-#include "algorithm.h" // 包含填充算法的头文件
+#include "Algorithm.h" // 包含填充算法的头文件
 #include "easyimgui.h" // 自定义 EasyImGui 库
 #include <GLFW/glfw3.h>
 #include <cmath>

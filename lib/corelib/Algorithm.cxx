@@ -675,4 +675,189 @@ std::vector<ImVec2> SutherlandHodgmanPolygonClip(const std::vector<ImVec2>& poly
     return outputList;
 }
 
+//exp13
+// 判断两条线段是否相交并计算交点
+bool IsIntersect(
+    const ImVec2& A, const ImVec2& B,
+    const ImVec2& C, const ImVec2& D,
+    ImVec2& intersection, float& t) 
+{
+    ImVec2 b = ImVec2(B.x - A.x, B.y - A.y);  // 向量 AB
+    ImVec2 d = ImVec2(D.x - C.x, D.y - C.y);  // 向量 CD
+    ImVec2 c = ImVec2(C.x - A.x, C.y - A.y);
+    ImVec2 d_perp = ImVec2(-d.y, d.x); // CD 的垂直向量
 
+    float denom = b.x * d_perp.x + b.y * d_perp.y;
+    if (std::fabs(denom) < 1e-6f)
+        return false; // 平行或共线
+
+    t = (c.x * d_perp.x + c.y * d_perp.y) / denom;
+    float u = (c.x * (-b.y) + c.y * b.x) / denom;
+
+    if (t < 0.0f || t > 1.0f)
+        return false; // 交点不在线段 AB 内
+
+    if (u < 0.0f || u > 1.0f)
+        return false; // 交点不在线段 CD 内
+
+    intersection = ImVec2(A.x + t * b.x, A.y + t * b.y);
+    return true;
+}
+
+// Weiler-Atherton 多边形裁剪算法实现
+std::vector<std::vector<ImVec2>> WeilerAthertonPolygonClip(
+    const std::vector<ImVec2>& subjectPolygon,
+    const std::vector<ImVec2>& clipPolygon) 
+{
+    // 复制原始多边形以插入交点
+    std::vector<ImVec2> subject = subjectPolygon;
+    std::vector<ImVec2> clip = clipPolygon;
+
+    // 存储交点信息
+    std::vector<IntersectionPoint> subjectIntersections;
+    std::vector<IntersectionPoint> clipIntersections;
+
+    // 查找并插入交点
+    for (size_t i = 0; i < subject.size(); ++i) {
+        size_t next_i = (i + 1) % subject.size();
+        ImVec2 A = subject[i];
+        ImVec2 B = subject[next_i];
+        for (size_t j = 0; j < clip.size(); ++j) {
+            size_t next_j = (j + 1) % clip.size();
+            ImVec2 C = clip[j];
+            ImVec2 D = clip[next_j];
+            ImVec2 intersection;
+            float t;
+            if (IsIntersect(A, B, C, D, intersection, t)) {
+                // 插入交点到 subject 多边形
+                subject.insert(subject.begin() + i + 1, intersection);
+                subjectIntersections.emplace_back(intersection, false); // 初始未标记
+                ++i; // 跳过刚插入的交点
+
+                // 插入交点到 clip 多边形
+                clip.insert(clip.begin() + j + 1, intersection);
+                clipIntersections.emplace_back(intersection, false);
+                ++j; // 跳过刚插入的交点
+            }
+        }
+    }
+
+    // 如果没有交点，返回空结果或根据情况返回完整主多边形
+    if (subjectIntersections.empty()) {
+        // 检查是否完全 inside
+        // 简单判断第一个点是否在裁剪窗口内
+        // 可以使用射线法或其他方法
+        // 这里假设使用 Sutherland-Hodgman 内部判断
+        // 为简化，此处返回空
+        return {};
+    }
+
+    // 标记交点为入口或出口
+    // 假设裁剪多边形是逆时针排列
+    for (auto& inter : subjectIntersections) {
+        // 找出当前交点在 subject 和 clip 中的位置
+        size_t subj_idx = std::distance(subject.begin(),
+            std::find(subject.begin(), subject.end(), inter.point));
+        size_t clip_idx = std::distance(clip.begin(),
+            std::find(clip.begin(), clip.end(), inter.point));
+
+        // 获取前一个点和后一个点
+        ImVec2 prev = (subj_idx == 0) ? subject.back() : subject[subj_idx - 1];
+        ImVec2 next = (subj_idx + 1 < subject.size()) ? subject[subj_idx + 1] : subject[0];
+
+        // 计算向量 AB 和 BC 的叉积
+        ImVec2 AB = ImVec2(next.x - inter.point.x, next.y - inter.point.y);
+        ImVec2 BC = ImVec2(clip[(clip_idx + 1) % clip.size()].x - inter.point.x,
+                           clip[(clip_idx + 1) % clip.size()].y - inter.point.y);
+        float cross = AB.x * BC.y - AB.y * BC.x;
+
+        // 如果叉积 > 0，则是进入
+        inter.isEntering = (cross > 0);
+    }
+
+    // 遍历交点，构建裁剪后的多边形
+    std::vector<std::vector<ImVec2>> resultPolygons;
+
+    for (auto& startInter : subjectIntersections) {
+        if (startInter.visited || !startInter.isEntering)
+            continue;
+
+        std::vector<ImVec2> clippedPolygon;
+        IntersectionPoint* currentInter = &startInter;
+        bool traverseSubject = true;
+
+        while (currentInter != nullptr) {
+            if (currentInter->visited)
+                break;
+
+            currentInter->visited = true;
+            clippedPolygon.emplace_back(currentInter->point);
+
+            if (traverseSubject) {
+                // 从当前交点开始，遍历 subject 多边形
+                size_t subj_idx = std::distance(subject.begin(),
+                    std::find(subject.begin(), subject.end(), currentInter->point));
+                size_t next_subj_idx = (subj_idx + 1) % subject.size();
+
+                while (next_subj_idx != subj_idx) {
+                    ImVec2 currentPoint = subject[next_subj_idx];
+                    clippedPolygon.emplace_back(currentPoint);
+
+                    // 检查是否是另一个交点
+                    auto it = std::find_if(subjectIntersections.begin(),
+                        subjectIntersections.end(),
+                        [&](const IntersectionPoint& ip) {
+                            return ip.point.x == currentPoint.x && ip.point.y == currentPoint.y;
+                        });
+
+                    if (it != subjectIntersections.end()) {
+                        currentInter = &(*it);
+                        traverseSubject = false;
+                        break;
+                    }
+
+                    next_subj_idx = (next_subj_idx + 1) % subject.size();
+                }
+
+                if (next_subj_idx == subj_idx) {
+                    currentInter = nullptr;
+                }
+            }
+            else {
+                // 从当前交点开始，遍历 clip 多边形
+                size_t clip_idx = std::distance(clip.begin(),
+                    std::find(clip.begin(), clip.end(), currentInter->point));
+                size_t next_clip_idx = (clip_idx + 1) % clip.size();
+
+                while (next_clip_idx != clip_idx) {
+                    ImVec2 currentPoint = clip[next_clip_idx];
+                    clippedPolygon.emplace_back(currentPoint);
+
+                    // 检查是否是另一个交点
+                    auto it = std::find_if(clipIntersections.begin(),
+                        clipIntersections.end(),
+                        [&](const IntersectionPoint& ip) {
+                            return ip.point.x == currentPoint.x && ip.point.y == currentPoint.y;
+                        });
+
+                    if (it != clipIntersections.end()) {
+                        currentInter = &(*it);
+                        traverseSubject = true;
+                        break;
+                    }
+
+                    next_clip_idx = (next_clip_idx + 1) % clip.size();
+                }
+
+                if (next_clip_idx == clip_idx) {
+                    currentInter = nullptr;
+                }
+            }
+        }
+
+        if (clippedPolygon.size() >= 3)
+            resultPolygons.push_back(clippedPolygon);
+    }
+
+    return resultPolygons;
+}

@@ -4,37 +4,42 @@
 #include "imgui.h"
 #include <vector>
 
-
 // 重载 ImVec2 的运算符
-inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs) {
+inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
+{
     return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y);
 }
 
-inline ImVec2 operator-(const ImVec2& lhs, const ImVec2& rhs) {
+inline ImVec2 operator-(const ImVec2& lhs, const ImVec2& rhs)
+{
     return ImVec2(lhs.x - rhs.x, lhs.y - rhs.y);
 }
 
-inline ImVec2 operator*(const ImVec2& vec, float scalar) {
+inline ImVec2 operator*(const ImVec2& vec, float scalar)
+{
     return ImVec2(vec.x * scalar, vec.y * scalar);
 }
 
-inline ImVec2 operator*(float scalar, const ImVec2& vec) {
+inline ImVec2 operator*(float scalar, const ImVec2& vec)
+{
     return ImVec2(vec.x * scalar, vec.y * scalar);
 }
 
-inline ImVec2 operator/(const ImVec2& vec, float scalar) {
+inline ImVec2 operator/(const ImVec2& vec, float scalar)
+{
     return ImVec2(vec.x / scalar, vec.y / scalar);
 }
 
 // 判断两个 ImVec2 是否相等
-inline bool operator==(const ImVec2& lhs, const ImVec2& rhs) {
+inline bool operator==(const ImVec2& lhs, const ImVec2& rhs)
+{
     return (lhs.x == rhs.x) && (lhs.y == rhs.y);
 }
 
-inline bool operator!=(const ImVec2& lhs, const ImVec2& rhs) {
+inline bool operator!=(const ImVec2& lhs, const ImVec2& rhs)
+{
     return !(lhs == rhs);
 }
-
 
 struct Edge {
     float x; // 当前扫描线与边的交点的 x 坐标
@@ -122,6 +127,30 @@ bool IsInside(const ImVec2& point, const ClipWindow& clipWindow, int edge);
 // 使用 Sutherland-Hodgman 算法对多边形进行裁剪
 std::vector<ImVec2> SutherlandHodgmanPolygonClip(const std::vector<ImVec2>& polygon, const ClipWindow& clipWindow);
 
+// exp13
+//  结构体用于表示一个交点及其类型
+struct IntersectionPoint {
+    ImVec2 point;
+    bool isEntering;
+    bool visited;
 
+    IntersectionPoint(const ImVec2& p, bool entering)
+        : point(p)
+        , isEntering(entering)
+        , visited(false)
+    {
+    }
+};
 
+// Weiler-Atherton 多边形裁剪算法
+std::vector<std::vector<ImVec2>> WeilerAthertonPolygonClip(
+    const std::vector<ImVec2>& subjectPolygon,
+    const std::vector<ImVec2>& clipPolygon);
+
+// 判断两条线段是否相交并计算交点
+bool IsIntersect(
+    const ImVec2& A, const ImVec2& B,
+    const ImVec2& C, const ImVec2& D,
+    ImVec2& intersection, float& t);
+    
 #endif // ALGORITHM_H
