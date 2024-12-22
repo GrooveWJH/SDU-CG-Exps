@@ -21,11 +21,10 @@ add_subdirectory(corelib)
 add_subdirectory(glfw)
 add_subdirectory(glad)
 
-# 添加 GLM 的 include 路径（直接指定头文件路径）
-target_include_directories(groovecglib INTERFACE ${GLM_INCLUDE_DIR})
 
 # 添加其他库的 include 路径（如果需要）
 target_include_directories(groovecglib INTERFACE
+    ${GLM_INCLUDE_DIR}
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/corelib>
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/glad>
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/imgui>
@@ -41,4 +40,4 @@ target_link_libraries(groovecglib INTERFACE
 )
 
 # 定义目标（例如 imgui、corelib 等子目录的依赖库）
-target_compile_definitions(groovecglib PRIVATE ${GLM_DEFINITIONS})
+target_compile_definitions(groovecglib PUBLIC ${GLM_DEFINITIONS})

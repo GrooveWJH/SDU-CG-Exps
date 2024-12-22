@@ -12,4 +12,4 @@ target_include_directories(corelib PUBLIC
     # ${CMAKE_SOURCE_DIR}/lib/imgui/backends
 )
 
-target_link_libraries(corelib PUBLIC imgui)
+target_link_libraries(corelib PUBLIC imgui glad)

@@ -3,6 +3,9 @@
 
 #include "imgui.h"
 #include <vector>
+#include <cmath>
+#include <algorithm>
+#include <string>
 
 // 重载 ImVec2 的运算符
 inline ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
@@ -23,6 +26,10 @@ inline ImVec2 operator*(const ImVec2& vec, float scalar)
 inline ImVec2 operator*(float scalar, const ImVec2& vec)
 {
     return ImVec2(vec.x * scalar, vec.y * scalar);
+}
+
+inline ImVec2 operator*(const ImVec2& vec, const ImVec2& scale) {
+    return ImVec2(vec.x * scale.x, vec.y * scale.y);
 }
 
 inline ImVec2 operator/(const ImVec2& vec, float scalar)
@@ -116,10 +123,7 @@ bool CohenSutherlandLineClip(float& x0, float& y0, float& x1, float& y1, float x
 
 // 定义裁剪窗口
 struct ClipWindow {
-    float x0 = 100.0f; // 左上角 x 坐标
-    float y0 = 100.0f; // 左上角 y 坐标
-    float x1 = 200.0f; // 右下角 x 坐标
-    float y1 = 200.0f; // 右下角 y 坐标
+    float x0, y0, x1, y1;
 };
 
 bool IsInside(const ImVec2& point, const ClipWindow& clipWindow, int edge);
@@ -152,5 +156,11 @@ bool IsIntersect(
     const ImVec2& A, const ImVec2& B,
     const ImVec2& C, const ImVec2& D,
     ImVec2& intersection, float& t);
-    
+
+// Function to clip rectangles to a window
+std::vector<std::pair<ImVec2, ImVec2>> ClipRectanglesToWindow(
+    const std::vector<std::pair<ImVec2, ImVec2>>& rectangles,
+    const ImVec2& windowTopLeft,
+    const ImVec2& windowBottomRight);
+
 #endif // ALGORITHM_H

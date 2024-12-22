@@ -27,4 +27,15 @@ void EndImGuiFrame(GLFWwindow* window);
 // 清理 GLFW 和 ImGui
 void CleanupGLFWAndImGui(GLFWwindow* window);
 
+struct ControlPoint {
+    ImVec2 position;
+    bool isDragging;
+
+    ControlPoint(const ImVec2& pos)
+        : position(pos)
+        , isDragging(false)
+    {
+    }
+};
+
 #endif // EASYIMGUI_H

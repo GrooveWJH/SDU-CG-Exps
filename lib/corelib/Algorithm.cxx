@@ -1,8 +1,4 @@
 #include "Algorithm.h"
-#include <algorithm>
-#include <cmath>
-#include <vector>
-#include <queue>
 
 // 使用 DDA 算法绘制直线
 void DrawLineDDA(ImDrawList* draw_list,
@@ -368,7 +364,7 @@ void DrawPolygonWithOrderedEdgeTable(ImDrawList* draw_list,
             float xStart = activeEdgeTable[i].x;
             float xEnd = activeEdgeTable[i + 1].x;
 
-            // 转换为整数像素坐标，考虑画布偏移
+            // 转换为整数像素坐标，考虑画布偏���
             int pixelStart = static_cast<int>(std::ceil(xStart));
             int pixelEnd = static_cast<int>(std::floor(xEnd));
 
@@ -568,7 +564,7 @@ bool CohenSutherlandLineClip(float& x0, float& y0, float& x1, float& y1, float x
             // 两个端点都在窗口外，并且在相同区域
             break;
         } else {
-            // 至少一个端点在窗口外
+            // 至��一个端点在窗口外
             float x, y;
 
             // 选择一个在窗口外的端点
@@ -704,7 +700,7 @@ bool IsIntersect(
     return true;
 }
 
-// Weiler-Atherton 多边形裁剪算法实现
+// Weiler-Atherton 多边形裁剪���法实现
 std::vector<std::vector<ImVec2>> WeilerAthertonPolygonClip(
     const std::vector<ImVec2>& subjectPolygon,
     const std::vector<ImVec2>& clipPolygon) 
@@ -860,4 +856,36 @@ std::vector<std::vector<ImVec2>> WeilerAthertonPolygonClip(
     }
 
     return resultPolygons;
+}
+
+// Clip rectangles to a window
+std::vector<std::pair<ImVec2, ImVec2>> ClipRectanglesToWindow(
+    const std::vector<std::pair<ImVec2, ImVec2>>& rectangles,
+    const ImVec2& windowTopLeft,
+    const ImVec2& windowBottomRight,
+    const ImVec2& windowSize,
+    const ImVec2& viewportTopLeft,
+    const ImVec2& viewportSize) {
+    
+    std::vector<std::pair<ImVec2, ImVec2>> clippedRectangles;
+
+    for (const auto& rect : rectangles) {
+        ImVec2 topLeft = windowTopLeft + rect.first;
+        ImVec2 bottomRight = windowTopLeft + rect.second;
+
+        // Clip to window boundaries
+        ImVec2 clippedTopLeft = ImVec2(
+            std::max(topLeft.x, windowTopLeft.x),
+            std::max(topLeft.y, windowTopLeft.y));
+        ImVec2 clippedBottomRight = ImVec2(
+            std::min(bottomRight.x, windowBottomRight.x),
+            std::min(bottomRight.y, windowBottomRight.y));
+
+        // Ensure valid rectangle
+        if (clippedTopLeft.x < clippedBottomRight.x && clippedTopLeft.y < clippedBottomRight.y) {
+            clippedRectangles.emplace_back(clippedTopLeft, clippedBottomRight);
+        }
+    }
+
+    return clippedRectangles;
 }
