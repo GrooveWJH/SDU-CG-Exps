@@ -1,42 +1,38 @@
 #include <glad.h>
-#include <GLFW/glfw3.h>
+#include "easyimgui.h"
+#include "imgui.h"
+#include <cmath>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-#include <vector>
 #include <iostream>
-#include <cmath>
+#include <vector>
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#include "easyimgui.h"
-
-// ------------------------------ Bézier 相关函数 ------------------------------ //
+// ------------------------------ Bézier 相关函数 ------------------------------
+// //
 
 // 计算三次贝塞尔曲线某个 t 参数（0 ~ 1）下的点
 // controlPoints.size() = 4，即有 4 个控制点：P0, P1, P2, P3
-glm::vec3 evaluateCubicBezier(const std::vector<glm::vec3>& controlPoints, float t)
+glm::vec3 evaluateCubicBezier(const std::vector<glm::vec3>& controlPoints,
+    float t)
 {
     // 三次 Bézier 基础公式：
-    // B(t) = (1 - t)^3 * P0 + 3(1 - t)^2 * t * P1 + 3(1 - t) * t^2 * P2 + t^3 * P3
+    // B(t) = (1 - t)^3 * P0 + 3(1 - t)^2 * t * P1 + 3(1 - t) * t^2 * P2 + t^3 *
+    // P3
     float u = 1.0f - t;
     float u2 = u * u;
     float u3 = u2 * u;
     float t2 = t * t;
     float t3 = t2 * t;
 
-    glm::vec3 p =
-        u3 * controlPoints[0] +
-        3.0f * u2 * t * controlPoints[1] +
-        3.0f * u * t2 * controlPoints[2] +
-        t3 * controlPoints[3];
+    glm::vec3 p = u3 * controlPoints[0] + 3.0f * u2 * t * controlPoints[1] + 3.0f * u * t2 * controlPoints[2] + t3 * controlPoints[3];
     return p;
 }
 
 // 生成 Bézier 曲线采样点（用于绘制）
-std::vector<glm::vec3> generateBezierCurveVertices(const std::vector<glm::vec3>& controlPoints, int segments)
+std::vector<glm::vec3>
+generateBezierCurveVertices(const std::vector<glm::vec3>& controlPoints,
+    int segments)
 {
     std::vector<glm::vec3> curve;
     curve.reserve(segments + 1);
@@ -48,9 +44,12 @@ std::vector<glm::vec3> generateBezierCurveVertices(const std::vector<glm::vec3>&
     return curve;
 }
 
-// ------------------------------ OpenGL 辅助函数 ------------------------------ //
+// ------------------------------ OpenGL 辅助函数 ------------------------------
+// //
 
-static void checkShaderCompileErrors(unsigned int shader, const std::string& type) {
+static void checkShaderCompileErrors(unsigned int shader,
+    const std::string& type)
+{
     int success;
     char infoLog[1024];
     if (type != "PROGRAM") {
@@ -59,21 +58,23 @@ static void checkShaderCompileErrors(unsigned int shader, const std::string& typ
             glGetShaderInfoLog(shader, 1024, NULL, infoLog);
             std::cerr << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n"
                       << infoLog << "\n"
-                      << "-------------------------------------------------------" << std::endl;
+                      << "-------------------------------------------------------"
+                      << std::endl;
         }
-    }
-    else {
+    } else {
         glGetProgramiv(shader, GL_LINK_STATUS, &success);
         if (!success) {
             glGetProgramInfoLog(shader, 1024, NULL, infoLog);
             std::cerr << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n"
                       << infoLog << "\n"
-                      << "-------------------------------------------------------" << std::endl;
+                      << "-------------------------------------------------------"
+                      << std::endl;
         }
     }
 }
 
-// ------------------------------ 顶点和片段着色器 ------------------------------ //
+// ------------------------------ 顶点和片段着色器
+// ------------------------------ //
 
 const char* lineVertexShaderSource = R"glsl(
 #version 330 core
@@ -121,9 +122,8 @@ int main()
     glViewport(0, 0, fbWidth, fbHeight);
 
     // 注册回调，保持视口跟随窗口大小变化
-    glfwSetFramebufferSizeCallback(window, [](GLFWwindow* win, int w, int h) {
-        glViewport(0, 0, w, h);
-    });
+    glfwSetFramebufferSizeCallback(
+        window, [](GLFWwindow* win, int w, int h) { glViewport(0, 0, w, h); });
 
     // 启用混合以显示透明颜色
     glEnable(GL_BLEND);
@@ -159,10 +159,8 @@ int main()
 
     // 初始化控制点
     std::vector<glm::vec3> controlPoints = {
-        glm::vec3(-0.8f, -0.4f, 0.0f),
-        glm::vec3(-0.2f,  0.6f,  0.0f),
-        glm::vec3( 0.3f,  0.6f,  0.0f),
-        glm::vec3( 0.8f, -0.4f,  0.0f)
+        glm::vec3(-0.8f, -0.4f, 0.0f), glm::vec3(-0.2f, 0.6f, 0.0f),
+        glm::vec3(0.3f, 0.6f, 0.0f), glm::vec3(0.8f, -0.4f, 0.0f)
     };
 
     // 设置贝塞尔曲线窗口的固定位置和大小
@@ -182,10 +180,8 @@ int main()
         ImGui::Text("Drag the control points directly in the Bezier Curve window.");
         if (ImGui::Button("Reset Points")) {
             controlPoints = {
-                glm::vec3(-0.8f, -0.4f, 0.0f),
-                glm::vec3(-0.2f,  0.6f,  0.0f),
-                glm::vec3( 0.3f,  0.6f,  0.0f),
-                glm::vec3( 0.8f, -0.4f,  0.0f)
+                glm::vec3(-0.8f, -0.4f, 0.0f), glm::vec3(-0.2f, 0.6f, 0.0f),
+                glm::vec3(0.3f, 0.6f, 0.0f), glm::vec3(0.8f, -0.4f, 0.0f)
             };
         }
         ImGui::End();
@@ -193,10 +189,8 @@ int main()
         // 贝塞尔曲线窗口 - 设置为固定位置和大小
         ImGui::SetNextWindowPos(bezierWindowPos, ImGuiCond_Always);
         ImGui::SetNextWindowSize(bezierWindowSize, ImGuiCond_Always);
-        ImGui::Begin("Bézier Curve", nullptr, 
-            ImGuiWindowFlags_NoMove | 
-            ImGuiWindowFlags_NoResize | 
-            ImGuiWindowFlags_NoCollapse);
+        ImGui::Begin("Bézier Curve", nullptr,
+            ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
         // 获取绘制列表
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -207,7 +201,8 @@ int main()
 
         // 定义绘图区域内的坐标系 (以窗口中心为原点，范围 [-1,1] x [-1,1])
         float scale = std::min(window_size.x, window_size.y) / 2.0f * 0.8f; // 留边距
-        ImVec2 center = ImVec2(window_pos.x + window_size.x / 2.0f, window_pos.y + window_size.y / 2.0f);
+        ImVec2 center = ImVec2(window_pos.x + window_size.x / 2.0f,
+            window_pos.y + window_size.y / 2.0f);
 
         // 定义映射函数
         auto worldToScreen = [&](const glm::vec3& p) -> ImVec2 {
@@ -224,8 +219,7 @@ int main()
             // Check if mouse is near any control point
             for (int i = 0; i < controlPoints.size(); ++i) {
                 ImVec2 screen_pos = worldToScreen(controlPoints[i]);
-                float distance = sqrtf((mouse_pos.x - screen_pos.x) * (mouse_pos.x - screen_pos.x) +
-                                       (mouse_pos.y - screen_pos.y) * (mouse_pos.y - screen_pos.y));
+                float distance = sqrtf((mouse_pos.x - screen_pos.x) * (mouse_pos.x - screen_pos.x) + (mouse_pos.y - screen_pos.y) * (mouse_pos.y - screen_pos.y));
                 if (distance <= dragThreshold) {
                     isDragging = true;
                     selectedPoint = i;
@@ -237,21 +231,18 @@ int main()
         if (isDragging && mouse_down) {
             if (selectedPoint >= 0 && selectedPoint < controlPoints.size()) {
                 // Convert screen coordinates back to world coordinates
-                glm::vec3 new_pos(
-                    (mouse_pos.x - center.x) / scale,
+                glm::vec3 new_pos((mouse_pos.x - center.x) / scale,
                     (center.y - mouse_pos.y) / scale,
-                    controlPoints[selectedPoint].z
-                );
+                    controlPoints[selectedPoint].z);
                 controlPoints[selectedPoint] = new_pos;
             }
-        }
-        else {
+        } else {
             isDragging = false;
             selectedPoint = -1;
         }
 
         // 生成曲线顶点
-        const int curveSegments = 100;  // 采样分段数越多越平滑
+        const int curveSegments = 100; // 采样分段数越多越平滑
         std::vector<glm::vec3> curveVertices = generateBezierCurveVertices(controlPoints, curveSegments);
 
         // 绘制控制折线（蓝色）
@@ -272,7 +263,9 @@ int main()
         for (size_t i = 0; i < controlPoints.size(); ++i) {
             ImVec2 p = worldToScreen(controlPoints[i]);
             // 颜色根据是否被选中
-            ImU32 color = (i == selectedPoint && isDragging) ? IM_COL32(255, 255, 0, 255) : IM_COL32(255, 255, 0, 200);
+            ImU32 color = (i == selectedPoint && isDragging)
+                ? IM_COL32(255, 255, 0, 255)
+                : IM_COL32(255, 255, 0, 200);
             draw_list->AddCircleFilled(p, 6.0f, color);
             draw_list->AddCircle(p, 6.0f, IM_COL32(0, 0, 0, 255), 12, 2.0f); // 边框
         }

@@ -30,16 +30,19 @@ void main() {
 }
 )glsl";
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
     glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow* window) {
+void processInput(GLFWwindow* window)
+{
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 }
 
-int main() {
+int main()
+{
     // 初始化 GLFW
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -73,7 +76,8 @@ int main() {
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (!success) {
         glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"
+                  << infoLog << std::endl;
     }
     // 片段着色器
     unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -83,7 +87,8 @@ int main() {
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
     if (!success) {
         glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+        std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n"
+                  << infoLog << std::endl;
     }
     // 链接着色器
     unsigned int shaderProgram = glCreateProgram();
@@ -94,7 +99,8 @@ int main() {
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (!success) {
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+        std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
+                  << infoLog << std::endl;
     }
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
@@ -102,53 +108,53 @@ int main() {
     // 设置顶点数据(和缓冲区)并配置顶点属性
     float vertices[] = {
         // 前面
-        0.0f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f, // 顶部 - 红色
+        0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // 顶部 - 红色
         -0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, // 左前 - 绿色
-        0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, // 右前 - 蓝色
+        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, // 右前 - 蓝色
 
         // 后面
-        0.0f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f, // 顶部 - 红色
-        -0.5f, -0.5f, -0.5f,1.0f, 1.0f, 0.0f, // 左后 - 黄色
+        0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // 顶部 - 红色
+        -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, // 左后 - 黄色
         0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, // 右后 - 青色
 
         // 左侧
-        0.0f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f, // 顶部 - 红色
+        0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // 顶部 - 红色
         -0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, // 左前 - 绿色
-        -0.5f, -0.5f, -0.5f,1.0f, 1.0f, 0.0f, // 左后 - 黄色
+        -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, // 左后 - 黄色
 
         // 右侧
-        0.0f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f, // 顶部 - 红色
-        0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, // 右前 - 蓝色
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f  // 右后 - 青色
+        0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // 顶部 - 红色
+        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, // 右前 - 蓝色
+        0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 1.0f // 右后 - 青色
     };
 
     // 边的顶点数据
     float edgeVertices[] = {
         // 顶部到底部的边
-        0.0f, 0.5f, 0.0f,   0.0f, 0.0f, 0.0f, // 顶部 - 黑色
+        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, // 顶部 - 黑色
         -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, // 左前 - 黑色
 
-        0.0f, 0.5f, 0.0f,   0.0f, 0.0f, 0.0f, // 顶部 - 黑色
-        0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, // 右前 - 黑色
+        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, // 顶部 - 黑色
+        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, // 右前 - 黑色
 
-        0.0f, 0.5f, 0.0f,   0.0f, 0.0f, 0.0f, // 顶部 - 黑色
-        -0.5f, -0.5f, -0.5f,0.0f, 0.0f, 0.0f, // 左后 - 黑色
+        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, // 顶部 - 黑色
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // 左后 - 黑色
 
-        0.0f, 0.5f, 0.0f,   0.0f, 0.0f, 0.0f, // 顶部 - 黑色
+        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, // 顶部 - 黑色
         0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // 右后 - 黑色
 
         // 底部的边
         -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, // 左前 - 黑色
-        0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, // 右前 - 黑色
+        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, // 右前 - 黑色
 
-        0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, // 右前 - 黑色
+        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, // 右前 - 黑色
         0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // 右后 - 黑色
 
         0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // 右后 - 黑色
-        -0.5f, -0.5f, -0.5f,0.0f, 0.0f, 0.0f, // 左后 - 黑色
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // 左后 - 黑色
 
-        -0.5f, -0.5f, -0.5f,0.0f, 0.0f, 0.0f, // 左后 - 黑色
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f  // 左前 - 黑色
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // 左后 - 黑色
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 0.0f // 左前 - 黑色
     };
 
     unsigned int VBO, VAO, edgeVBO, edgeVAO;
